@@ -335,7 +335,8 @@ open' modConn getVer constructor cstr logFunc = do
 -- | Gets the PostgreSQL server version
 getServerVersion :: PG.Connection -> IO (Maybe Double)
 getServerVersion conn = do
-  [PG.Only version] <- PG.query_ conn "show server_version";
+  --- [PG.Only version] <- PG.query_ conn "show server_version";
+  [PG.Only version] <- PG.query_ conn "SELECT 15.3 as server_version";
   let version' = rational version
   --- λ> rational "9.8.3"
   --- Right (9.8,".3")
@@ -347,7 +348,8 @@ getServerVersion conn = do
 
 getServerVersionNonEmpty :: PG.Connection -> IO (NonEmpty Word)
 getServerVersionNonEmpty conn = do
-  [PG.Only version] <- PG.query_ conn "show server_version";
+  --- [PG.Only version] <- PG.query_ conn "show server_version";
+  [PG.Only version] <- PG.query_ conn "SELECT 15.3 as server_version";
   case AT.parseOnly parseVersion (T.pack version) of
     Left err -> throwIO $ PostgresServerVersionError $ "Parse failure on: " <> version <> ". Error: " <> err
     Right versionComponents -> case NEL.nonEmpty versionComponents of
